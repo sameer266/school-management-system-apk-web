@@ -5,7 +5,7 @@ from ..schemas import schemas
 from  ..database.session import get_db
 
 
-router=APIRouter(prefix="/categories")
+router=APIRouter(prefix="/categories",tags=["Category"])
 
 @router.get("/")
 def get_all_category(db: Session=Depends(get_db)):

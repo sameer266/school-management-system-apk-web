@@ -35,13 +35,13 @@ product_attributes = Table(
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True, nullable=False)
     name = Column(String(100), nullable=False)
-    email = Column(String(150), unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.customer)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    shops = relationship("Shop", back_populates="owner")
+    shops = relationship("Shop", back_populates="owner",cascade="all,delete-orphan")
     orders = relationship("Order", back_populates="customer")
     reviews = relationship("Review", back_populates="customer")
 
@@ -51,7 +51,7 @@ class User(Base):
 class Shop(Base):
     __tablename__ = "shops"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id",ondelete="CASCADE"), nullable=False)
     shop_name = Column(String(200), nullable=False)
     phone = Column(String(20))
     location_lat = Column(DECIMAL(9,6))
@@ -60,7 +60,7 @@ class Shop(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", back_populates="shops")
-    products = relationship("Product", back_populates="shop")
+    products = relationship("Product", back_populates="shop",cascade="all,delete-orphan")
     orders = relationship("Order", back_populates="shop")
 
 # --------------------
@@ -72,7 +72,7 @@ class Category(Base):
     name = Column(String(200), nullable=False, unique=True)
     description = Column(Text)
 
-    products = relationship("Product", back_populates="category")
+    products = relationship("Product", back_populates="category", cascade="all,delete-orphan")
 
 # --------------------
 # Attribute Table
@@ -91,8 +91,8 @@ class Attribute(Base):
 class Product(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True, index=True)
-    shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)
-    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
+    shop_id = Column(Integer, ForeignKey("shops.id",ondelete="CASCADE"), nullable=False)
+    category_id = Column(Integer, ForeignKey('categories.id',ondelete="CASCADE"), nullable=False)
     name = Column(String(200), nullable=False)
     description = Column(Text)
     price = Column(DECIMAL(10,2), nullable=True)

@@ -7,7 +7,7 @@ from ..models import models
 from ..schemas import schemas
 from  ..database.session import get_db
 
-router=APIRouter(prefix="/products")
+router=APIRouter(prefix="/products",tags=["Products"])
 upload_folder="products"
 # Get all products from the database
 @router.get("/")
@@ -27,7 +27,7 @@ def filter_product(product_name:str,db: Session=Depends(get_db)):
     product_obj=db.query(models.Product).filter(models.Product.name.ilike(f"%{product_name}%")).all()
     products=[]
     for p in product_obj:
-        products.append({"id":p.id,"category_name":p.category.name,"name":p.name,"price":p.price,"sales_price":p.sales_price,"description":p.description,"image_url":p.image_url})
+        products.append({"id":p.id,"category_name":p.category.name,"name":p.name,"price":p.price,"sales_price":p.sales_price,"description":p.description,"image_url":p.image_url,"attributes":{"id":p.attributes.id,"name":p.attributes.name,"value":p.attributes.value},})
     return {"products":products}
 
 # Create a new product

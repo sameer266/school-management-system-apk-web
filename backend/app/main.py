@@ -2,7 +2,7 @@ from fastapi import FastAPI,Form,HTTPException,status,Depends
 from sqlalchemy.orm import Session
 
 from .database.session import engine,Base,get_db
-from .routes import users
+from .routes import users,category,product,shop,attributes
 from .models import models
 from .routes.users import pwd_context
 
@@ -12,6 +12,11 @@ Base.metadata.create_all(bind=engine)
 app=FastAPI(title="Nepal Shop E-commerce App")
 
 app.include_router(users.router)
+app.include_router(category.router)
+app.include_router(product.router)
+app.include_router(shop.router)
+app.include_router(attributes.router)
+
 
 @app.get("/")
 def root():
